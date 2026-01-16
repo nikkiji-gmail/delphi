@@ -76,6 +76,9 @@ begin
     I: Integer;
   begin
     try
+      // Initialize random number generator for consistent demo data
+      Randomize;
+      
       NotifyStatus('BLE 기기 검색 중...');
       
       // 데모용 기기 추가 (실제로는 WinRT BluetoothLEAdvertisementWatcher 사용)

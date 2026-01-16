@@ -8,9 +8,14 @@ echo ========================================
 echo.
 
 REM Check if Delphi is installed
-set DELPHI_PATH=C:\Program Files (x86)\Embarcadero\Studio\22.0
+REM Try 64-bit installation path first
+set DELPHI_PATH=C:\Program Files\Embarcadero\Studio\22.0
 if not exist "%DELPHI_PATH%\bin\dcc32.exe" (
-    echo ERROR: Delphi 13 not found at %DELPHI_PATH%
+    REM Fall back to 32-bit installation path
+    set DELPHI_PATH=C:\Program Files (x86)\Embarcadero\Studio\22.0
+)
+if not exist "%DELPHI_PATH%\bin\dcc32.exe" (
+    echo ERROR: Delphi 13 not found
     echo Please update DELPHI_PATH in this script
     pause
     exit /b 1
