@@ -40,11 +40,20 @@ implementation
 uses
   System.Threading;
 
+var
+  RandomSeed: Integer = 0;
+
 constructor TBLEManager.Create;
 begin
   inherited Create;
   FDevices := TObjectList<TBLEDevice>.Create(True);
   FScanning := False;
+  // Initialize random seed once for thread-safe demo data generation
+  if RandomSeed = 0 then
+  begin
+    Randomize;
+    RandomSeed := RandSeed;
+  end;
 end;
 
 destructor TBLEManager.Destroy;
@@ -74,24 +83,25 @@ begin
   TTask.Run(procedure
   var
     I: Integer;
+    RandomOffset: Integer;
   begin
     try
-      // Initialize random number generator for consistent demo data
-      Randomize;
-      
       NotifyStatus('BLE 기기 검색 중...');
       
       // 데모용 기기 추가 (실제로는 WinRT BluetoothLEAdvertisementWatcher 사용)
+      // DEMO MODE: 실제 환경에서는 WinRT API가 실제 BLE 기기를 검색합니다
       Sleep(500);
       
       for I := 1 to 3 do
       begin
         if not FScanning then
           Break;
-          
+        
+        // Generate demo MAC addresses with random component to avoid conflicts
+        RandomOffset := Random(256);
         var Device := TBLEDevice.Create(
-          Format('BLE Device %d', [I]),
-          Format('AA:BB:CC:DD:EE:%0.2X', [I]),
+          Format('[DEMO] BLE Device %d', [I]),
+          Format('DE:MO:%0.2X:%0.2X:%0.2X:%0.2X', [I, RandomOffset, I * 10, RandomOffset + I]),
           -50 - Random(50)
         );
         
